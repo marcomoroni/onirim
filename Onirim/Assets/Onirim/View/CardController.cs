@@ -17,6 +17,10 @@ public class CardController : MonoBehaviour
 	public float smoothRotateTime = 0.1f;
 	private float rotateVelocity = 0f;
 
+	public bool canBeGrabbed = true; // Will be false by default
+
+	public bool followTargetPoint = true; // [?]
+
 	private void Awake()
 	{
 		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -43,8 +47,15 @@ public class CardController : MonoBehaviour
 
 	private void Update()
 	{
-		SmoothGoToTargetPoint();
+		if (followTargetPoint)
+		{
+			SmoothGoToTargetPoint();
+		}
 	}
+
+	// OnGrab...
+
+	// OnGrabRelease...
 
 	private void SmoothGoToTargetPoint()
 	{
