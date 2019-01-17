@@ -30,11 +30,6 @@ public class FingerController : MonoBehaviour
 				DropCard();
 			}
 		}
-
-		/*if (cardGrabbed != null)
-		{
-			MakeCardFollowTheCursor();
-		}*/
 	}
 
 	private void FollowCursor()
@@ -43,21 +38,12 @@ public class FingerController : MonoBehaviour
 		transform.position = new Vector3(cursorPosition.x, cursorPosition.y, zIndex);
 	}
 
+	// TODO: Attempt moves here
 	private void DropCard()
 	{
 		cardGrabbed.GetComponent<CardController>().dropped.Invoke();
 		cardGrabbed = null;
 	}
-
-	/*private void MakeCardFollowTheCursor()
-	{
-		// Position (immediate)
-		cardGrabbed.transform.position = new Vector2(transform.position.x, transform.position.y);
-
-		// Rotation (smooth) [?]
-		cardGrabbed.transform.eulerAngles = car
-		//transform.eulerAngles = transform.eulerAngles.With(z: Mathf.SmoothDampAngle(transform.eulerAngles.z, targetPoint.transform.eulerAngles.z, ref rotateVelocity, smoothRotateTime));
-	}*/
 
 	private void TryToGrabCardOrClick()
 	{

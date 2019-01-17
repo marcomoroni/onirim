@@ -32,7 +32,7 @@ public class OnirimGameView : MonoBehaviour
 	public GameObject targetPointPrefab;
 
 	private Dictionary<Card, GameObject> cardModelDictionary = new Dictionary<Card, GameObject>();
-	private Dictionary<GameObject, GameObject> targetPointsDictionary = new Dictionary<GameObject, GameObject>();
+	//private Dictionary<GameObject, GameObject> targetPointsDictionary = new Dictionary<GameObject, GameObject>();
 
 	private void Start()
 	{
@@ -173,7 +173,7 @@ public class OnirimGameView : MonoBehaviour
 
 			// Save to dictionaries
 			cardModelDictionary.Add(card, newViewCard);
-			targetPointsDictionary.Add(newTargetPoint, newViewCard);
+			//targetPointsDictionary.Add(newTargetPoint, newViewCard);
 		}
 	}
 

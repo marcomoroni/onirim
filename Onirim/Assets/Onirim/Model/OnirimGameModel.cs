@@ -59,7 +59,7 @@ public class OnirimGameModel
 
 public class Card
 {
-	public bool faceUp = true; // TODO: to implement
+	public bool faceUp = true;
 
 	public readonly Onirim_Category category;
 	public readonly Onirim_Symbol? symbol;
@@ -215,8 +215,9 @@ public class GameState
 			allCards.Add(new Card(category: Onirim_Category.Dream, dream: Onirim_Dream.Nightmare));
 		}
 
-		// Add all cards to main deck
+		// Add all cards to main deck face down
 		mainDeck.AddRange(allCards);
+		mainDeck.ForEach(card => card.faceUp = false);
 		mainDeck.Shuffle();
 	}
 

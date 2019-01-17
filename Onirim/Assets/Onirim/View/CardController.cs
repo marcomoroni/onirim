@@ -14,7 +14,7 @@ public class CardController : MonoBehaviour
 
 	public GameObject targetPoint;
 	public float smoothTranslateTime = 0.1f;
-	private Vector3 translateVelocity = Vector3.zero;
+	private Vector2 translateVelocity = Vector3.zero;
 	public float smoothRotateTime = 0.1f;
 	public float rotateVelocity = 0f;
 
@@ -22,8 +22,6 @@ public class CardController : MonoBehaviour
 	public GameObjectEvent grabbed = new GameObjectEvent();
 	public UnityEvent dropped = new UnityEvent();
 	public bool canBeGrabbed = true; // TODO: Will be false by default
-
-	//private bool followTargetPoint = true; // [?]
 	private bool isGrabbed = false;
 	private GameObject grabber = null;
 
@@ -79,12 +77,12 @@ public class CardController : MonoBehaviour
 		}
 		else
 		{
-			// Translation
+			// Translation // TODO: check if this if statement is necessary
 			float distanceToTargetPoint = Vector2.Distance(transform.position, targetPoint.transform.position);
 			if (distanceToTargetPoint > 0.00001f)
 			{
 				// Move towards position target
-				transform.position = Vector3.SmoothDamp(transform.position, targetPoint.transform.position, ref translateVelocity, smoothTranslateTime);
+				transform.position = Vector2.SmoothDamp(transform.position, targetPoint.transform.position, ref translateVelocity, smoothTranslateTime);
 			}
 			else if (distanceToTargetPoint > 9.99999944E-11f)
 			{
