@@ -43,8 +43,13 @@ public class CardController : MonoBehaviour
 
 	private void Update()
 	{
-		float distanceToTargetPoint = Vector2.Distance(transform.position, targetPoint.transform.position);
+		SmoothGoToTargetPoint();
+	}
 
+	private void SmoothGoToTargetPoint()
+	{
+		// Translation
+		float distanceToTargetPoint = Vector2.Distance(transform.position, targetPoint.transform.position);
 		if (distanceToTargetPoint > 0.00001f)
 		{
 			// Move towards position target
@@ -56,6 +61,7 @@ public class CardController : MonoBehaviour
 			transform.position = targetPoint.transform.position;
 		}
 
-		//transform.rotation = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.z, targetPoint.transform.rotation.eulerAngles.z, ref rotateVelocity, smoothRotateTime);
+		// Rotation
+		transform.eulerAngles = transform.eulerAngles.With(z: Mathf.SmoothDampAngle(transform.eulerAngles.z, targetPoint.transform.eulerAngles.z, ref rotateVelocity, smoothRotateTime));
 	}
 }

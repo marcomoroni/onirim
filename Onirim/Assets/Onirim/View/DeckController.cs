@@ -8,4 +8,11 @@ public abstract class DeckController : MonoBehaviour
 	{
 		return (transform.position, transform.rotation);
 	}*/
+
+	public List<Card> deckModel;
+
+	public void ClaimCards()
+	{
+
+	}
 }
