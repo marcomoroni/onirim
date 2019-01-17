@@ -117,6 +117,11 @@ public class CardController : MonoBehaviour
 		return spriteRenderer.sortingOrder;
 	}
 
+	public void SetRenderedZIndex(int index)
+	{
+		spriteRenderer.sortingOrder = index;
+	}
+
 
 
 

@@ -345,6 +345,7 @@ static class StepFactory
 						executeMethod = (g, stepsStack) =>
 						{
 							Card drawnCard = g.mainDeck.GetLastItem();
+							drawnCard.faceUp = true;
 							g.mainDeck.Remove(drawnCard);
 							g.drawn = drawnCard;
 
@@ -420,6 +421,7 @@ static class StepFactory
 					{
 						executeMethod = (g, stepsStack) =>
 						{
+							g.limbo.ForEach(card => card.faceUp = false);
 							g.mainDeck.AddRange(g.limbo);
 							g.limbo = null;
 							g.mainDeck.Shuffle();

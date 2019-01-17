@@ -63,7 +63,7 @@ public class FingerController : MonoBehaviour
 		int highestZ = int.MinValue;
 		foreach (RaycastHit2D hit in hits)
 		{
-			GameObject go = hit.collider.gameObject.transform.parent.gameObject; // (parent)
+			GameObject go = hit.collider.gameObject.transform.parent.gameObject.transform.parent.gameObject; // (parent of parent)
 			CardController cc = go.GetComponent<CardController>();
 
 			// If it's a card (parent has CardController component)

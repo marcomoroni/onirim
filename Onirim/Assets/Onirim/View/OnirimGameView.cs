@@ -10,6 +10,14 @@ public class OnirimGameView : MonoBehaviour
 	GameState gameState;
 
 	public GameObject cardPrefab;
+	public GameObject targetPointPrefab;
+	private Dictionary<Card, GameObject> cardModelDictionary = new Dictionary<Card, GameObject>();
+	//private Dictionary<GameObject, GameObject> targetPointsDictionary = new Dictionary<GameObject, GameObject>();
+
+	public float timeBetweenStep = 0.2f;
+	private float timerUntilNextStep = 0;
+
+	[Header("Sprites")]
 	public Sprite spriteBack;
 	public Sprite spriteRedSun;
 	public Sprite spriteRedMoon;
@@ -29,10 +37,9 @@ public class OnirimGameView : MonoBehaviour
 	public Sprite spriteBrownDoor;
 	public Sprite spriteNightmare;
 
-	public GameObject targetPointPrefab;
-
-	private Dictionary<Card, GameObject> cardModelDictionary = new Dictionary<Card, GameObject>();
-	//private Dictionary<GameObject, GameObject> targetPointsDictionary = new Dictionary<GameObject, GameObject>();
+	[Header("Deck Layouts")]
+	public DeckLayoutController deckLayoutHand;
+	public DeckLayoutController deckLayoutLimbo;
 
 	private void Start()
 	{
@@ -48,11 +55,21 @@ public class OnirimGameView : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown("space"))
+		// Timer
+		if (timerUntilNextStep > 0)
+		{
+			timerUntilNextStep -= Time.deltaTime;
+		}
+		if (timerUntilNextStep <= 0)
 		{
 			OnirimGameController.flowContinueRequested.Invoke();
 		}
 
+		// TESTS
+		if (Input.GetKeyDown("space"))
+		{
+			//OnirimGameController.flowContinueRequested.Invoke();
+		}
 		if (Input.GetKeyDown("1"))
 		{
 			Move_Phase1_PlayCardInLabirinth newMove = new Move_Phase1_PlayCardInLabirinth(gameState.hand[0]);
@@ -83,51 +100,51 @@ public class OnirimGameView : MonoBehaviour
 
 						if (color == Onirim_Color.Red && symbol == Onirim_Symbol.Sun)
 						{
-							f = spriteRedSun; break;
+							f = spriteRedSun;
 						}
 						else if (color == Onirim_Color.Red && symbol == Onirim_Symbol.Moon)
 						{
-							f = spriteRedMoon; break;
+							f = spriteRedMoon;
 						}
 						else if (color == Onirim_Color.Red && symbol == Onirim_Symbol.Key)
 						{
-							f = spriteRedKey; break;
+							f = spriteRedKey;
 						}
 						else if (color == Onirim_Color.Green && symbol == Onirim_Symbol.Sun)
 						{
-							f = spriteGreenSun; break;
+							f = spriteGreenSun;
 						}
 						else if (color == Onirim_Color.Green && symbol == Onirim_Symbol.Moon)
 						{
-							f = spriteGreenMoon; break;
+							f = spriteGreenMoon;
 						}
 						else if (color == Onirim_Color.Green && symbol == Onirim_Symbol.Key)
 						{
-							f = spriteGreenKey; break;
+							f = spriteGreenKey;
 						}
 						else if (color == Onirim_Color.Blue && symbol == Onirim_Symbol.Sun)
 						{
-							f = spriteBlueSun; break;
+							f = spriteBlueSun;
 						}
 						else if (color == Onirim_Color.Blue && symbol == Onirim_Symbol.Moon)
 						{
-							f = spriteBlueMoon; break;
+							f = spriteBlueMoon;
 						}
 						else if (color == Onirim_Color.Blue && symbol == Onirim_Symbol.Key)
 						{
-							f = spriteBlueKey; break;
+							f = spriteBlueKey;
 						}
 						else if (color == Onirim_Color.Brown && symbol == Onirim_Symbol.Sun)
 						{
-							f = spriteBrownSun; break;
+							f = spriteBrownSun;
 						}
 						else if (color == Onirim_Color.Brown && symbol == Onirim_Symbol.Moon)
 						{
-							f = spriteBrownMoon; break;
+							f = spriteBrownMoon;
 						}
 						else if (color == Onirim_Color.Brown && symbol == Onirim_Symbol.Key)
 						{
-							f = spriteBrownKey; break;
+							f = spriteBrownKey;
 						}
 					}
 					break;
@@ -197,12 +214,19 @@ public class OnirimGameView : MonoBehaviour
 		switch (stepName)
 		{
 			case StepName.Setup_AddDrawnCardToHand:
-				Debug.Log("Adding card to hand...");
+				deckLayoutHand.ClaimTargetPoints(gameState.hand, cardModelDictionary);
+				break;
+
+			case StepName.Setup_PutDrawnCardInLimbo:
+				deckLayoutLimbo.ClaimTargetPoints(gameState.limbo, cardModelDictionary);
 				break;
 
 			case StepName.Setup_ShuffleLimboBackIntoDeck:
 				Debug.Log("Shuffling...");
 				break;
 		}
+
+		//  Should not consider instant moves...
+		timerUntilNextStep = timeBetweenStep;
 	}
 }
