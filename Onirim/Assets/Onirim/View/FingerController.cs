@@ -20,18 +20,21 @@ public class FingerController : MonoBehaviour
 
 		if (Input.GetMouseButtonDown(0))
 		{
-			TryToGrabCard();
+			TryToGrabCardOrClick();
 		}
 
 		if (Input.GetMouseButtonUp(0))
 		{
-			DropCard();
+			if (cardGrabbed != null)
+			{
+				DropCard();
+			}
 		}
 
-		if (cardGrabbed != null)
+		/*if (cardGrabbed != null)
 		{
-			cardGrabbed.transform.position = new Vector2(transform.position.x, transform.position.y);
-		}
+			MakeCardFollowTheCursor();
+		}*/
 	}
 
 	private void FollowCursor()
@@ -42,22 +45,60 @@ public class FingerController : MonoBehaviour
 
 	private void DropCard()
 	{
-		cardGrabbed.GetComponent<CardController>().followTargetPoint = true;
+		cardGrabbed.GetComponent<CardController>().dropped.Invoke();
 		cardGrabbed = null;
 	}
 
-	private void TryToGrabCard()
+	/*private void MakeCardFollowTheCursor()
 	{
+		// Position (immediate)
+		cardGrabbed.transform.position = new Vector2(transform.position.x, transform.position.y);
+
+		// Rotation (smooth) [?]
+		cardGrabbed.transform.eulerAngles = car
+		//transform.eulerAngles = transform.eulerAngles.With(z: Mathf.SmoothDampAngle(transform.eulerAngles.z, targetPoint.transform.eulerAngles.z, ref rotateVelocity, smoothRotateTime));
+	}*/
+
+	private void TryToGrabCardOrClick()
+	{
+		// Check for click first, otherwise check grab
+
 		RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.zero);
-		Debug.Log("Hits: " + hits.Length);
+
+		// Click
 		foreach (RaycastHit2D hit in hits)
 		{
-			cardGrabbed = hit.collider.gameObject;
-			CardController deckController = cardGrabbed.GetComponent<CardController>();
+			// ...
+		}
 
-			deckController.followTargetPoint = false;
+		// Grab
+		// (Use sorting layer to determine which card is on top)
+		GameObject cardOnTop = null;
+		int highestZ = int.MinValue;
+		foreach (RaycastHit2D hit in hits)
+		{
+			GameObject go = hit.collider.gameObject.transform.parent.gameObject; // (parent)
+			CardController cc = go.GetComponent<CardController>();
 
-			break;
+			// If it's a card (parent has CardController component)
+			if (cc != null)
+			{
+				// If it can be grabbed
+				if (cc.canBeGrabbed)
+				{
+					// If z is higher
+					if(cc.GetRenderedZIndex() > highestZ)
+					{
+						cardOnTop = go;
+						highestZ = cc.GetRenderedZIndex();
+					}
+				}
+			}
+		}
+		if (cardOnTop != null)
+		{
+			cardGrabbed = cardOnTop;
+			cardOnTop.GetComponent<CardController>().grabbed.Invoke(gameObject);
 		}
 	}
 }

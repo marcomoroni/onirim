@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CardController : MonoBehaviour
 {
@@ -15,15 +16,23 @@ public class CardController : MonoBehaviour
 	public float smoothTranslateTime = 0.1f;
 	private Vector3 translateVelocity = Vector3.zero;
 	public float smoothRotateTime = 0.1f;
-	private float rotateVelocity = 0f;
+	public float rotateVelocity = 0f;
 
-	public bool canBeGrabbed = true; // Will be false by default
+	public class GameObjectEvent : UnityEvent<GameObject> { }
+	public GameObjectEvent grabbed = new GameObjectEvent();
+	public UnityEvent dropped = new UnityEvent();
+	public bool canBeGrabbed = true; // TODO: Will be false by default
 
-	public bool followTargetPoint = true; // [?]
+	//private bool followTargetPoint = true; // [?]
+	private bool isGrabbed = false;
+	private GameObject grabber = null;
 
 	private void Awake()
 	{
 		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+		grabbed.AddListener(OnGrab);
+		dropped.AddListener(OnGrabRelease);
 	}
 
 	public void SetSprites(Sprite front, Sprite back)
@@ -32,6 +41,9 @@ public class CardController : MonoBehaviour
 		_backSprite = back;
 		spriteRenderer.sprite = _frontSprite;
 	}
+
+
+
 
 	public void FlipFaceUp()
 	{
@@ -45,34 +57,73 @@ public class CardController : MonoBehaviour
 		_faceUp = false;
 	}
 
+
+
+
 	private void Update()
 	{
-		if (followTargetPoint)
-		{
-			SmoothGoToTargetPoint();
-		}
+		SmoothGoToTargetPoint();
 	}
-
-	// OnGrab...
-
-	// OnGrabRelease...
 
 	private void SmoothGoToTargetPoint()
 	{
-		// Translation
-		float distanceToTargetPoint = Vector2.Distance(transform.position, targetPoint.transform.position);
-		if (distanceToTargetPoint > 0.00001f)
+		// If is grabbed instantly move to grabber pos, else smooth translation
+		// Rotation is always smooth
+		if (isGrabbed)
 		{
-			// Move towards position target
-			transform.position = Vector3.SmoothDamp(transform.position, targetPoint.transform.position, ref translateVelocity, smoothTranslateTime);
-		}
-		else if (distanceToTargetPoint > 9.99999944E-11f)
-		{
-			// Move to exact position
-			transform.position = targetPoint.transform.position;
-		}
+			// Translation
+			transform.position = grabber.transform.position;
 
-		// Rotation
-		transform.eulerAngles = transform.eulerAngles.With(z: Mathf.SmoothDampAngle(transform.eulerAngles.z, targetPoint.transform.eulerAngles.z, ref rotateVelocity, smoothRotateTime));
+			// Rotation
+			transform.eulerAngles = transform.eulerAngles.With(z: Mathf.SmoothDampAngle(transform.eulerAngles.z, grabber.transform.eulerAngles.z, ref rotateVelocity, smoothRotateTime));
+		}
+		else
+		{
+			// Translation
+			float distanceToTargetPoint = Vector2.Distance(transform.position, targetPoint.transform.position);
+			if (distanceToTargetPoint > 0.00001f)
+			{
+				// Move towards position target
+				transform.position = Vector3.SmoothDamp(transform.position, targetPoint.transform.position, ref translateVelocity, smoothTranslateTime);
+			}
+			else if (distanceToTargetPoint > 9.99999944E-11f)
+			{
+				// Move to exact position
+				transform.position = targetPoint.transform.position;
+			}
+
+			// Rotation
+			transform.eulerAngles = transform.eulerAngles.With(z: Mathf.SmoothDampAngle(transform.eulerAngles.z, targetPoint.transform.eulerAngles.z, ref rotateVelocity, smoothRotateTime));
+		}
 	}
+
+
+
+
+	private void OnGrab(GameObject grabber)
+	{
+		//followTargetPoint = false;
+		isGrabbed = true;
+		this.grabber = grabber;
+	}
+
+	private void OnGrabRelease()
+	{
+		//followTargetPoint = true;
+		isGrabbed = false;
+		this.grabber = null;
+	}
+
+	public int GetRenderedZIndex()
+	{
+		return spriteRenderer.sortingOrder;
+	}
+
+
+
+
+
+
+
+
 }

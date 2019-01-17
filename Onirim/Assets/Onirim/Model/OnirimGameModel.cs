@@ -59,6 +59,8 @@ public class OnirimGameModel
 
 public class Card
 {
+	public bool faceUp = true; // TODO: to implement
+
 	public readonly Onirim_Category category;
 	public readonly Onirim_Symbol? symbol;
 	public readonly Onirim_Color? color;
