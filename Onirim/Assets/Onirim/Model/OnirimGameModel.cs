@@ -34,14 +34,10 @@ public class OnirimGameModel
 
 	#region Events for view
 
-	// There shoulb be no need to pass any parameter because the view should be
-	// able to use the gamestate
-
-	public static UnityEvent mainDeckShuffled = new UnityEvent();
-	public static UnityEvent shuffleLimboBackIntoMainDeck = new UnityEvent();
-	public static UnityEvent cardDrawnFromTopOfMainDeck = new UnityEvent();
-	public static UnityEvent cardDrawnAddedToHand = new UnityEvent();
-	public static UnityEvent cardDrawnPutInLimbo = new UnityEvent();
+	public class StepEvent : UnityEvent<StepName> { }
+	public static StepEvent stepEntered = new StepEvent();
+	public static StepEvent stepExecuted = new StepEvent();
+	public static StepEvent stepExited = new StepEvent();
 
 	#endregion
 
@@ -260,16 +256,16 @@ public enum StepName
 
 public abstract class Step
 {
-	public abstract string name { get; }
+	public abstract StepName name { get; }
 }
 
 public class ExecuteStep : Step
 {
-	private string _name;
-	public override string name { get { return _name; } }
+	private StepName _name;
+	public override StepName name { get { return _name; } }
 	public bool isInstant;
 
-	public ExecuteStep(string name, bool isInstant = false)
+	public ExecuteStep(StepName name, bool isInstant = false)
 	{
 		_name = name;
 		this.isInstant = isInstant;
@@ -280,12 +276,12 @@ public class ExecuteStep : Step
 
 public class MoveChoiceStep : Step
 {
-	private string _name;
-	public override string name { get { return _name; } }
+	private StepName _name;
+	public override StepName name { get { return _name; } }
 
 	public List<Type> allowedMoves = new List<Type>();
 
-	public MoveChoiceStep(string name, List<Type> allowedMoves)
+	public MoveChoiceStep(StepName name, List<Type> allowedMoves)
 	{
 		_name = name;
 		this.allowedMoves = allowedMoves;
@@ -304,7 +300,7 @@ static class StepFactory
 		{
 			case StepName.Setup_ComputeInit:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString(), true)
+					ExecuteStep s = new ExecuteStep(stepName, true)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
@@ -323,7 +319,7 @@ static class StepFactory
 
 			case StepName.Setup_CheckIfHandIsComplete:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString(), true)
+					ExecuteStep s = new ExecuteStep(stepName, true)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
@@ -342,14 +338,13 @@ static class StepFactory
 
 			case StepName.Setup_DrawCard:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString())
+					ExecuteStep s = new ExecuteStep(stepName)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
 							Card drawnCard = g.mainDeck.GetLastItem();
 							g.mainDeck.Remove(drawnCard);
 							g.drawn = drawnCard;
-							OnirimGameModel.cardDrawnFromTopOfMainDeck.Invoke();
 
 							stepsStack.Push(StepFactory.Create(StepName.Setup_ComputeWhatToDoWithDrawnCard));
 						}
@@ -359,7 +354,7 @@ static class StepFactory
 
 			case StepName.Setup_ComputeWhatToDoWithDrawnCard:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString(), true)
+					ExecuteStep s = new ExecuteStep(stepName, true)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
@@ -378,13 +373,12 @@ static class StepFactory
 
 			case StepName.Setup_AddDrawnCardToHand:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString())
+					ExecuteStep s = new ExecuteStep(stepName)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
 							g.hand.Add(g.drawn);
 							g.drawn = null;
-							OnirimGameModel.cardDrawnAddedToHand.Invoke();
 						}
 					};
 					return s;
@@ -392,13 +386,12 @@ static class StepFactory
 
 			case StepName.Setup_PutDrawnCardInLimbo:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString())
+					ExecuteStep s = new ExecuteStep(stepName)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
 							g.limbo.Add(g.drawn);
 							g.drawn = null;
-							OnirimGameModel.cardDrawnPutInLimbo.Invoke();
 						}
 					};
 					return s;
@@ -406,7 +399,7 @@ static class StepFactory
 
 			case StepName.Setup_ComputeIfLimboNeedsToBeReshuffled:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString(), true)
+					ExecuteStep s = new ExecuteStep(stepName, true)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
@@ -421,14 +414,13 @@ static class StepFactory
 
 			case StepName.Setup_ShuffleLimboBackIntoDeck:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString())
+					ExecuteStep s = new ExecuteStep(stepName)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
 							g.mainDeck.AddRange(g.limbo);
 							g.limbo = null;
 							g.mainDeck.Shuffle();
-							OnirimGameModel.shuffleLimboBackIntoMainDeck.Invoke();
 						}
 					};
 					return s;
@@ -436,7 +428,7 @@ static class StepFactory
 
 			case StepName.NewTurn_ComputeInit:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString(), true)
+					ExecuteStep s = new ExecuteStep(stepName, true)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
@@ -452,17 +444,16 @@ static class StepFactory
 				}
 
 			case StepName.Phase1_MoveChoice:
-				return new MoveChoiceStep(stepName.ToString(), new List<Type> { typeof(Move_Phase1_PlayCardInLabirinth), typeof(Move_Phase1_DiscardCard) });
+				return new MoveChoiceStep(stepName, new List<Type> { typeof(Move_Phase1_PlayCardInLabirinth), typeof(Move_Phase1_DiscardCard) });
 
 			case StepName.Phase3_ShuffleLimboBackIntoDeck:
 				{
-					ExecuteStep s = new ExecuteStep(stepName.ToString())
+					ExecuteStep s = new ExecuteStep(stepName)
 					{
 						executeMethod = (g, stepsStack) =>
 						{
 							g.MoveCardsFromLimboToMainDeck();
 							g.mainDeck.Shuffle();
-							OnirimGameModel.shuffleLimboBackIntoMainDeck.Invoke();
 						}
 					};
 					return s;
@@ -497,13 +488,18 @@ public class Flow
 			return;
 		}
 
+		// Previous step ends here
+		if (currentStep != null) OnirimGameModel.stepExited.Invoke(currentStep.name);
+
 		currentStep = stepsStack.Pop();
 		Debug.Log("<color=purple>Step: <b>" + currentStep.name + "</b></color>");
+		OnirimGameModel.stepEntered.Invoke(currentStep.name);
 
 		switch (currentStep)
 		{
 			case ExecuteStep s:
 				s.executeMethod(g, stepsStack);
+				OnirimGameModel.stepExecuted.Invoke(currentStep.name);
 				if (s.isInstant) OnContinue();
 				break;
 
@@ -523,6 +519,7 @@ public class Flow
 		}
 
 		move.Execute(g, stepsStack);
+		OnirimGameModel.stepExecuted.Invoke(currentStep.name);
 		OnirimGameModel.moveChoiceStepExited.Invoke();
 		_awaitingMove = false;
 		OnContinue();
