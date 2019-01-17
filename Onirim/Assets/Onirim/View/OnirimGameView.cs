@@ -179,11 +179,8 @@ public class OnirimGameView : MonoBehaviour
 
 	private void AddListeners()
 	{
-		//OnirimGameModel.mainDeckShuffled.AddListener(OnMainDeckShuffled);
-		//OnirimGameModel.cardDrawnAddedToHand.AddListener(OnCardAddedToHand);
 		OnirimGameModel.stepEntered.AddListener(OnStepEntered);
 		OnirimGameModel.stepExecuted.AddListener(OnStepExecuted);
-		OnirimGameModel.stepExited.AddListener(OnStepExited);
 	}
 
 
@@ -207,10 +204,5 @@ public class OnirimGameView : MonoBehaviour
 				Debug.Log("Shuffling...");
 				break;
 		}
-	}
-
-	private void OnStepExited(StepName stepName)
-	{
-
 	}
 }

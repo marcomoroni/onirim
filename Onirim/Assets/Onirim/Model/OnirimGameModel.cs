@@ -37,7 +37,6 @@ public class OnirimGameModel
 	public class StepEvent : UnityEvent<StepName> { }
 	public static StepEvent stepEntered = new StepEvent();
 	public static StepEvent stepExecuted = new StepEvent();
-	public static StepEvent stepExited = new StepEvent();
 
 	#endregion
 
@@ -488,9 +487,6 @@ public class Flow
 			return;
 		}
 
-		// Previous step ends here
-		if (currentStep != null) OnirimGameModel.stepExited.Invoke(currentStep.name);
-
 		currentStep = stepsStack.Pop();
 		Debug.Log("<color=purple>Step: <b>" + currentStep.name + "</b></color>");
 		OnirimGameModel.stepEntered.Invoke(currentStep.name);
@@ -522,7 +518,7 @@ public class Flow
 		OnirimGameModel.stepExecuted.Invoke(currentStep.name);
 		OnirimGameModel.moveChoiceStepExited.Invoke();
 		_awaitingMove = false;
-		OnContinue();
+		//OnContinue();
 	}
 }
 
