@@ -1,0 +1,33 @@
+fileFormatVersion: 2
+guid: 3c961822a36394c46b6fdd7f8d1f95e0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - cardPrefab: {fileID: 6268057901087832520, guid: 6ec67e497c4a14e3ba8bb921cd2ebf2d,
+      type: 3}
+  - spriteBack: {fileID: 21300032, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteRedSun: {fileID: 21300024, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteRedMoon: {fileID: 21300026, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteRedKey: {fileID: 21300028, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteRedDoor: {fileID: 21300030, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteGreenSun: {fileID: 21300008, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteGreenMoon: {fileID: 21300010, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteGreenKey: {fileID: 21300012, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteGreenDoor: {fileID: 21300014, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteBlueSun: {fileID: 21300000, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteBlueMoon: {fileID: 21300002, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteBlueKey: {fileID: 21300004, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteBlueDoor: {fileID: 21300006, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteBrownSun: {instanceID: 0}
+  - spriteBrownMoon: {fileID: 21300018, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteBrownKey: {fileID: 21300020, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteBrownDoor: {fileID: 21300022, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - spriteNightmare: {fileID: 21300034, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  - targetPointPrefab: {fileID: 2673560187150911369, guid: 41be915bd799c4a23adac2c782b2f849,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

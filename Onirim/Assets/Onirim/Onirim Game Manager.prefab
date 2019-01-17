@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6765062402890029934
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3415369851154459556}
+  - component: {fileID: 4978829703868841398}
+  - component: {fileID: 8727849995617708647}
+  m_Layer: 0
+  m_Name: Onirim Game Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3415369851154459556
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6765062402890029934}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4978829703868841398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6765062402890029934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1091c32d6e89410d8d6099ad144eaf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8727849995617708647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6765062402890029934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c961822a36394c46b6fdd7f8d1f95e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardPrefab: {fileID: 6268057901087832520, guid: 6ec67e497c4a14e3ba8bb921cd2ebf2d,
+    type: 3}
+  spriteBack: {fileID: 21300032, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteRedSun: {fileID: 21300024, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteRedMoon: {fileID: 21300026, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteRedKey: {fileID: 21300028, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteRedDoor: {fileID: 21300030, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteGreenSun: {fileID: 21300008, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteGreenMoon: {fileID: 21300010, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteGreenKey: {fileID: 21300012, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteGreenDoor: {fileID: 21300014, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteBlueSun: {fileID: 21300000, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteBlueMoon: {fileID: 21300002, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteBlueKey: {fileID: 21300004, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteBlueDoor: {fileID: 21300006, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteBrownSun: {fileID: 0}
+  spriteBrownMoon: {fileID: 21300018, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteBrownKey: {fileID: 21300020, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteBrownDoor: {fileID: 21300022, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  spriteNightmare: {fileID: 21300034, guid: 5f64fb00b856d479a96c3a1333a87a0d, type: 3}
+  targetPointPrefab: {fileID: 2673560187150911369, guid: 41be915bd799c4a23adac2c782b2f849,
+    type: 3}
