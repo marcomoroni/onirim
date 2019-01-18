@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum DropAreaName { Labirinth, DiscardPile }
+public enum DropAreaName { Labirinth, DiscardPile, ObtainedDoors }
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class DropArea : MonoBehaviour

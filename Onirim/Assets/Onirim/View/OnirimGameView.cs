@@ -40,10 +40,12 @@ public class OnirimGameView : MonoBehaviour
 
 	[Header("Deck Layouts")]
 	public DeckLayoutController deckLayoutMain;
+	public DeckLayoutController deckLayoutMain_ShowAll;
 	public DeckLayoutController deckLayoutHand;
 	public DeckLayoutController deckLayoutLimbo;
 	public DeckLayoutController deckLayoutLabirinth;
 	public DeckLayoutController deckLayoutDiscard;
+	public DeckLayoutController deckLayoutObtainedDoors;
 
 	private void Start()
 	{
@@ -83,7 +85,7 @@ public class OnirimGameView : MonoBehaviour
 		if (Input.GetKeyDown("1"))
 		{
 			Move_Phase1_PlayCardInLabirinth newMove = new Move_Phase1_PlayCardInLabirinth(gameState.hand[0]);
-			OnirimGameController.moveAttempted.Invoke(newMove, () => { }, () => { });
+			OnirimGameController.moveAttempt.Invoke(newMove, () => { }, () => { });
 		}
 	}
 
@@ -241,7 +243,24 @@ public class OnirimGameView : MonoBehaviour
 
 			case StepName.Setup_ShuffleLimboBackIntoDeck:
 				deckLayoutMain.ClaimTargetPoints(gameState.mainDeck, cardModelDictionary);
-				Debug.Log("Shuffling...");
+				break;
+
+			case StepName.Phase1_MoveChoice:
+				deckLayoutLabirinth.ClaimTargetPoints(gameState.labirinth, cardModelDictionary);
+				deckLayoutDiscard.ClaimTargetPoints(gameState.discardPile, cardModelDictionary);
+				deckLayoutHand.ClaimTargetPoints(gameState.hand, cardModelDictionary);
+				break;
+
+			case StepName._ChooseDoorToObtainFromMainDeck:
+				deckLayoutObtainedDoors.ClaimTargetPoints(gameState.obtainedDoors, cardModelDictionary);
+				break;
+
+			case StepName._ExposeMainDeck:
+				deckLayoutMain_ShowAll.ClaimTargetPoints(gameState.mainDeck, cardModelDictionary);
+				break;
+
+			case StepName._DeexposeMainDeck:
+				deckLayoutMain.ClaimTargetPoints(gameState.mainDeck, cardModelDictionary);
 				break;
 		}
 

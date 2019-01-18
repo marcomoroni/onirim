@@ -79,7 +79,7 @@ public class FingerController : MonoBehaviour
 		if (move != null)
 		{
 			// Attempt Move
-			OnirimGameController.moveAttempted.Invoke(move, () => { }, () => { });
+			OnirimGameController.moveAttempt.Invoke(move, () => { }, () => { });
 		}
 	}
 
@@ -89,6 +89,16 @@ public class FingerController : MonoBehaviour
 		{
 			Card card = view.cardModelDictionary.FirstOrDefault(x => x.Value == item).Key;
 			return new Move_Phase1_PlayCardInLabirinth(card);
+		}
+		else if (currentStep.name == StepName.Phase1_MoveChoice && dropArea.name == DropAreaName.DiscardPile)
+		{
+			Card card = view.cardModelDictionary.FirstOrDefault(x => x.Value == item).Key;
+			return new Move_Phase1_DiscardCard(card);
+		}
+		else if (currentStep.name == StepName._ChooseDoorToObtainFromMainDeck && dropArea.name == DropAreaName.ObtainedDoors)
+		{
+			Card card = view.cardModelDictionary.FirstOrDefault(x => x.Value == item).Key;
+			return new Move_Phase1_GetDoorAfterPlayingCardInLabirinth(card);
 		}
 
 		// No moves available

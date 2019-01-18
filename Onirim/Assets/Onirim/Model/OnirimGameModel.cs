@@ -97,6 +97,16 @@ public class Move_Phase1_PlayCardInLabirinth : Move
 		g.labirinth.Add(card);
 
 		// add step to check for door
+		if (g.labirinth.Count >= 3)
+		{
+			bool last3CardsCanBeUsed = (g.labirinth.Count - 1) - g.usedCardsLabirinthIndex <= 3;
+			bool last3CardsHaveSameColor = g.labirinth[g.labirinth.Count - 1].color == g.labirinth[g.labirinth.Count - 2].color && g.labirinth[g.labirinth.Count - 2].color == g.labirinth[g.labirinth.Count - 3].color;
+			if (last3CardsCanBeUsed && last3CardsHaveSameColor)
+			{
+				steps.Push(StepFactory.Create(StepName._ChooseDoorToObtainFromMainDeck));
+				steps.Push(StepFactory.Create(StepName._ExposeMainDeck));
+			}
+		}
 	}
 
 	public override bool IsValid(GameState g)
@@ -137,9 +147,55 @@ public class Move_Phase1_DiscardCard : Move
 	}
 }
 
-// No no no NO NOOO
-// NO
-// One move per choice!
+public class Move_Phase1_GetDoorAfterPlayingCardInLabirinth : Move
+{
+	public Card card { get; }
+
+	public Move_Phase1_GetDoorAfterPlayingCardInLabirinth(Card card)
+	{
+		this.card = card;
+	}
+
+	public override bool IsValid(GameState g)
+	{
+		// If card is from main deck
+		if (!g.mainDeck.Contains(card)) return false;
+
+		// If card is door
+		if (card.category != Onirim_Category.Door) return false;
+
+		// If it's of the same color of the last card in labirinth
+		if (card.color != g.labirinth.GetLastItem().color) return false;
+
+		return true;
+	}
+
+	// Make the view do this automatically [?]
+	public override void Execute(GameState g, Stack<Step> steps)
+	{
+		// Update index of cards can be used
+		g.usedCardsLabirinthIndex = g.labirinth.Count - 1;
+
+		// Obtain card
+		g.mainDeck.Remove(card);
+		g.obtainedDoors.Add(card);
+
+		steps.Push(StepFactory.Create(StepName._ShuffleMainDeck));
+		steps.Push(StepFactory.Create(StepName._DeexposeMainDeck));
+
+		// TODO: add check for victory step
+	}
+}
+
+public class Move_Phase1_GetDoorAfterPlayingCardInLabirinthDoNothing : Move
+{
+	// TODO: Can do this only if cannot get any door
+
+	public override void Execute(GameState g, Stack<Step> steps)
+	{
+		steps.Push(StepFactory.Create(StepName._DeexposeMainDeck));
+	}
+}
 
 #endregion
 
@@ -150,7 +206,7 @@ public class GameState
 	// Store all cards as a reference
 	public List<Card> allCards = new List<Card>();
 
-	public readonly int maxNoOfCardsInHand = 5;
+	public readonly int maxNoOfCardsInHand = 15;
 
 	public Card drawn; // Later it may be a list of lists?
 
@@ -227,6 +283,7 @@ public class GameState
 
 public enum StepName
 {
+	// Setup
 	ReadyToStart,
 	Setup_ComputeInit,
 	Setup_ComputeCheckIfHandIsComplete,
@@ -237,11 +294,22 @@ public enum StepName
 	Setup_ComputeIfLimboNeedsToBeReshuffled,
 	Setup_ShuffleLimboBackIntoDeck,
 
+	// New turn
 	NewTurn_ComputeInit,
 
+	// Phase 1
 	Phase1_MoveChoice,
 
-	X_ComputeIfCanGetDoorFromCardsInLabirinth, //...
+
+
+	_ChooseDoorToObtainFromMainDeck,
+
+	_ExposeMainDeck,
+	_DeexposeMainDeck,
+
+	_ShuffleMainDeck,
+
+
 
 
 	Phase3_ComputeIfLimboNeedsToBeReshuffled,
@@ -457,6 +525,33 @@ static class StepFactory
 
 			case StepName.Phase1_MoveChoice:
 				return new MoveChoiceStep(stepName, new List<Type> { typeof(Move_Phase1_PlayCardInLabirinth), typeof(Move_Phase1_DiscardCard) });
+
+			case StepName._ChooseDoorToObtainFromMainDeck:
+				return new MoveChoiceStep(stepName, new List<Type> { typeof(Move_Phase1_GetDoorAfterPlayingCardInLabirinth), typeof(Move_Phase1_GetDoorAfterPlayingCardInLabirinthDoNothing) });
+
+			case StepName._ExposeMainDeck:
+				{
+					ExecuteStep s = new ExecuteStep(stepName)
+					{
+						executeMethod = (g, stepsStack) =>
+						{
+							g.mainDeck.ForEach(card => card.faceUp = true);
+						}
+					};
+					return s;
+				}
+
+			case StepName._DeexposeMainDeck:
+				{
+					ExecuteStep s = new ExecuteStep(stepName)
+					{
+						executeMethod = (g, stepsStack) =>
+						{
+							g.mainDeck.ForEach(card => card.faceUp = false);
+						}
+					};
+					return s;
+				}
 
 			case StepName.Phase3_ComputeIfLimboNeedsToBeReshuffled:
 				{

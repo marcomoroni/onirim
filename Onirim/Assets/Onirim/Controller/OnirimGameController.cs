@@ -26,7 +26,7 @@ public class OnirimGameController : MonoBehaviour
 	{
 		// Move choice step
 		flowContinueRequested.AddListener(OnFlowContinueRequest);
-		moveAttempted.AddListener(OnMoveAttempted);
+		moveAttempt.AddListener(OnMoveAttempted);
 		OnirimGameModel.stepEntered.AddListener(OnStepEntered);
 		OnirimGameModel.stepExecuted.AddListener(OnStepExecuted);
 	}
@@ -57,7 +57,7 @@ public class OnirimGameController : MonoBehaviour
 
 	// Get a move from view
 	public class AttemptMoveEvent : UnityEvent<Move, Action, Action> { }
-	public static AttemptMoveEvent moveAttempted = new AttemptMoveEvent();
+	public static AttemptMoveEvent moveAttempt = new AttemptMoveEvent();
 	private void OnMoveAttempted(Move move, Action callbackValid, Action callbackInvalid)
 	{
 		if (allowedMoves.Contains(move.GetType()) && move.IsValid(model.gameState))
