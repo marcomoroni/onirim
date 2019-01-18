@@ -16,7 +16,7 @@ public class OnirimGameView : MonoBehaviour
 
 	public float timeBetweenStep = 0.2f;
 	private float timerUntilNextStep = 0;
-	private bool waitingForMove = false;
+	private bool waitingForInput = false;
 
 	[Header("Sprites")]
 	public Sprite spriteBack;
@@ -61,7 +61,7 @@ public class OnirimGameView : MonoBehaviour
 	private void Update()
 	{
 		// Timer
-		if (!waitingForMove)
+		if (!waitingForInput)
 		{
 			if (timerUntilNextStep > 0)
 			{
@@ -76,7 +76,7 @@ public class OnirimGameView : MonoBehaviour
 		// TESTS
 		if (Input.GetKeyDown("space"))
 		{
-			//OnirimGameController.flowContinueRequested.Invoke();
+			OnirimGameController.flowContinueRequested.Invoke();
 		}
 		if (Input.GetKeyDown("1"))
 		{
@@ -218,7 +218,7 @@ public class OnirimGameView : MonoBehaviour
 		switch (step)
 		{
 			case MoveChoiceStep s:
-				waitingForMove = true;
+				waitingForInput = true;
 				break;
 		}
 	}
@@ -245,6 +245,6 @@ public class OnirimGameView : MonoBehaviour
 
 		//  Should not consider instant moves...
 		timerUntilNextStep = timeBetweenStep;
-		waitingForMove = false;
+		waitingForInput = false;
 }
 }

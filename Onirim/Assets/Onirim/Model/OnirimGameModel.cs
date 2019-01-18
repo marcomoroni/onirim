@@ -227,6 +227,7 @@ public class GameState
 
 public enum StepName
 {
+	ReadyToStart,
 	Setup_ComputeInit,
 	Setup_CheckIfHandIsComplete,
 	Setup_DrawCard,
@@ -292,6 +293,18 @@ static class StepFactory
 	{
 		switch (stepName)
 		{
+			case StepName.ReadyToStart:
+				{
+					ExecuteStep s = new ExecuteStep(stepName)
+					{
+						executeMethod = (g, stepsStack) =>
+						{
+							stepsStack.Push(StepFactory.Create(StepName.Setup_ComputeInit));
+						}
+					};
+					return s;
+				}
+
 			case StepName.Setup_ComputeInit:
 				{
 					ExecuteStep s = new ExecuteStep(stepName, true)
@@ -473,7 +486,7 @@ public class Flow
 	public Flow(GameState g)
 	{
 		this.g = g;
-		stepsStack.Push(StepFactory.Create(StepName.Setup_ComputeInit));
+		stepsStack.Push(StepFactory.Create(StepName.ReadyToStart));
 	}
 
 	public void OnContinue()

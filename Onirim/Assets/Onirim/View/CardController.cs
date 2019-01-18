@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class CardController : MonoBehaviour
+public class CardController : BoardGamePiece
 {
 	private bool _faceUp = true;
 	public bool faceUp { get { return _faceUp; } }
@@ -21,10 +21,9 @@ public class CardController : MonoBehaviour
 	[SerializeField]
 	private GameObject offset;
 
-	public class GameObjectEvent : UnityEvent<GameObject> { }
-	public GameObjectEvent grabbed = new GameObjectEvent();
-	public UnityEvent dropped = new UnityEvent();
-	public bool canBeGrabbed = true; // TODO: Will be false by default
+	public override GameObjectEvent grabbed { get; } = new GameObjectEvent();
+	public override UnityEvent dropped { get; } = new UnityEvent();
+	public override bool canBeGrabbed { get; set; } = true; // TODO: Will be false by default
 	private bool isGrabbed = false;
 	private GameObject grabber = null;
 
@@ -113,7 +112,7 @@ public class CardController : MonoBehaviour
 		this.grabber = null;
 	}
 
-	public int GetRenderedZIndex()
+	public override int GetRenderedZIndex()
 	{
 		return spriteRenderer.sortingOrder;
 	}

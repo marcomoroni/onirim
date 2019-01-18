@@ -41,7 +41,7 @@ public class FingerController : MonoBehaviour
 	// TODO: Attempt moves here
 	private void DropCard()
 	{
-		cardGrabbed.GetComponent<CardController>().dropped.Invoke();
+		cardGrabbed.GetComponent<BoardGamePiece>().dropped.Invoke();
 		cardGrabbed = null;
 	}
 
@@ -63,8 +63,8 @@ public class FingerController : MonoBehaviour
 		int highestZ = int.MinValue;
 		foreach (RaycastHit2D hit in hits)
 		{
-			GameObject go = hit.collider.gameObject.transform.parent.gameObject; // (parent)
-			CardController cc = go.GetComponent<CardController>();
+			BoardGamePiece cc = hit.collider.gameObject.GetComponentInParent<BoardGamePiece>();
+			GameObject go = cc.gameObject;
 
 			// If it's a card (parent has CardController component)
 			if (cc != null)
@@ -84,7 +84,7 @@ public class FingerController : MonoBehaviour
 		if (cardOnTop != null)
 		{
 			cardGrabbed = cardOnTop;
-			cardOnTop.GetComponent<CardController>().grabbed.Invoke(gameObject);
+			cardOnTop.GetComponent<BoardGamePiece>().grabbed.Invoke(gameObject);
 		}
 	}
 }
