@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class CardController : BoardGamePiece
+public class CardController : BoardGamePieceController
 {
 	private bool _faceUp = true;
 	public bool faceUp { get { return _faceUp; } }
@@ -12,7 +12,7 @@ public class CardController : BoardGamePiece
 	private Sprite _frontSprite;
 	private Sprite _backSprite;
 
-	public GameObject targetPoint;
+	public override GameObject targetPoint { get; set; }
 	public float smoothTranslateTime = 0.1f;
 	private Vector2 translateVelocity = Vector3.zero;
 	public float smoothRotateTime = 0.1f;
@@ -117,7 +117,7 @@ public class CardController : BoardGamePiece
 		return spriteRenderer.sortingOrder;
 	}
 
-	public void SetRenderedZIndex(int index)
+	public override void SetRenderedZIndex(int index)
 	{
 		spriteRenderer.sortingOrder = index;
 	}

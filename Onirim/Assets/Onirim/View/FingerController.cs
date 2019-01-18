@@ -41,7 +41,7 @@ public class FingerController : MonoBehaviour
 	// TODO: Attempt moves here
 	private void DropCard()
 	{
-		cardGrabbed.GetComponent<BoardGamePiece>().dropped.Invoke();
+		cardGrabbed.GetComponent<BoardGamePieceController>().dropped.Invoke();
 		cardGrabbed = null;
 	}
 
@@ -63,20 +63,20 @@ public class FingerController : MonoBehaviour
 		int highestZ = int.MinValue;
 		foreach (RaycastHit2D hit in hits)
 		{
-			BoardGamePiece cc = hit.collider.gameObject.GetComponentInParent<BoardGamePiece>();
-			GameObject go = cc.gameObject;
+			BoardGamePieceController bgpc = hit.collider.gameObject.GetComponentInParent<BoardGamePieceController>();
+			GameObject go = bgpc.gameObject;
 
 			// If it's a card (parent has CardController component)
-			if (cc != null)
+			if (bgpc != null)
 			{
 				// If it can be grabbed
-				if (cc.canBeGrabbed)
+				if (bgpc.canBeGrabbed)
 				{
 					// If z is higher
-					if(cc.GetRenderedZIndex() > highestZ)
+					if(bgpc.GetRenderedZIndex() > highestZ)
 					{
 						cardOnTop = go;
-						highestZ = cc.GetRenderedZIndex();
+						highestZ = bgpc.GetRenderedZIndex();
 					}
 				}
 			}
@@ -84,7 +84,7 @@ public class FingerController : MonoBehaviour
 		if (cardOnTop != null)
 		{
 			cardGrabbed = cardOnTop;
-			cardOnTop.GetComponent<BoardGamePiece>().grabbed.Invoke(gameObject);
+			cardOnTop.GetComponent<BoardGamePieceController>().grabbed.Invoke(gameObject);
 		}
 	}
 }

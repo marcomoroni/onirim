@@ -40,15 +40,18 @@ public class DeckLayoutController : MonoBehaviour
 		{
 			Card card = deckModel[i];
 			GameObject cardGameObject = cardModelDictionary[card];
-			CardController cardController = cardGameObject.GetComponent<CardController>();
-			GameObject targetPoint = cardController.targetPoint;
+			BoardGamePieceController boardGamePieceController = cardGameObject.GetComponent<BoardGamePieceController>();
+			GameObject targetPoint = boardGamePieceController.targetPoint;
 
 			// Set z render
-			cardController.SetRenderedZIndex(i);
+			boardGamePieceController.SetRenderedZIndex(i);
 
-			// Flip
-			if (card.faceUp) cardController.FlipFaceUp();
-			else cardController.FlipFaceDown();
+			// Flip (if card)
+			if (boardGamePieceController is CardController cardController)
+			{
+				if (card.faceUp) cardController.FlipFaceUp();
+				else cardController.FlipFaceDown();
+			}
 
 			// TEMP: set cards in a line
 			targetPoint.transform.position = transform.position + new Vector3(0.2f * i, 0);
