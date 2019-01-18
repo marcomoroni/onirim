@@ -25,16 +25,21 @@ public class OnirimGameController : MonoBehaviour
 		// Move choice step
 		flowContinueRequested.AddListener(OnFlowContinueRequest);
 		moveAttempted.AddListener(OnMoveAttempted);
-		OnirimGameModel.moveChoiceStepEntered.AddListener(OnMoveChoiceStepEnter);
-		OnirimGameModel.moveChoiceStepExited.AddListener(OnMoveChoiceStepExit);
+		OnirimGameModel.stepEntered.AddListener(OnStepEntered);
+		OnirimGameModel.stepExecuted.AddListener(OnStepExecuted);
 	}
 
-	private void OnMoveChoiceStepEnter(MoveChoiceStep step)
+	private void OnStepEntered(Step step)
 	{
-		allowedMoves = step.allowedMoves;
+		switch (step)
+		{
+			case MoveChoiceStep s:
+				allowedMoves = s.allowedMoves;
+				break;
+		}
 	}
 
-	private void OnMoveChoiceStepExit()
+	private void OnStepExecuted(Step step)
 	{
 		allowedMoves = new List<Type>();
 	}

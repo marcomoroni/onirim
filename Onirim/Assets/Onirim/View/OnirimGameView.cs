@@ -16,6 +16,7 @@ public class OnirimGameView : MonoBehaviour
 
 	public float timeBetweenStep = 0.2f;
 	private float timerUntilNextStep = 0;
+	private bool waitingForMove = false;
 
 	[Header("Sprites")]
 	public Sprite spriteBack;
@@ -38,6 +39,7 @@ public class OnirimGameView : MonoBehaviour
 	public Sprite spriteNightmare;
 
 	[Header("Deck Layouts")]
+	public DeckLayoutController deckLayoutMain;
 	public DeckLayoutController deckLayoutHand;
 	public DeckLayoutController deckLayoutLimbo;
 
@@ -51,18 +53,24 @@ public class OnirimGameView : MonoBehaviour
 		this.gameState = gameState;
 		CreateAllCards(gameState.allCards);
 		AddListeners();
+
+		// Add all cards to main deck [? here]
+		deckLayoutMain.ClaimTargetPoints(gameState.mainDeck, cardModelDictionary);
 	}
 
 	private void Update()
 	{
 		// Timer
-		if (timerUntilNextStep > 0)
+		if (!waitingForMove)
 		{
-			timerUntilNextStep -= Time.deltaTime;
-		}
-		if (timerUntilNextStep <= 0)
-		{
-			OnirimGameController.flowContinueRequested.Invoke();
+			if (timerUntilNextStep > 0)
+			{
+				timerUntilNextStep -= Time.deltaTime;
+			}
+			if (timerUntilNextStep <= 0)
+			{
+				OnirimGameController.flowContinueRequested.Invoke();
+			}
 		}
 
 		// TESTS
@@ -205,29 +213,38 @@ public class OnirimGameView : MonoBehaviour
 
 
 
-	private void OnStepEntered(StepName stepName)
+	private void OnStepEntered(Step step)
 	{
-
+		switch (step)
+		{
+			case MoveChoiceStep s:
+				waitingForMove = true;
+				break;
+		}
 	}
 
-	private void OnStepExecuted(StepName stepName)
+	private void OnStepExecuted(Step step)
 	{
-		switch (stepName)
+		switch (step.name)
 		{
 			case StepName.Setup_AddDrawnCardToHand:
 				deckLayoutHand.ClaimTargetPoints(gameState.hand, cardModelDictionary);
+				deckLayoutMain.ClaimTargetPoints(gameState.mainDeck, cardModelDictionary);
 				break;
 
 			case StepName.Setup_PutDrawnCardInLimbo:
 				deckLayoutLimbo.ClaimTargetPoints(gameState.limbo, cardModelDictionary);
+				deckLayoutMain.ClaimTargetPoints(gameState.mainDeck, cardModelDictionary);
 				break;
 
 			case StepName.Setup_ShuffleLimboBackIntoDeck:
+				deckLayoutMain.ClaimTargetPoints(gameState.mainDeck, cardModelDictionary);
 				Debug.Log("Shuffling...");
 				break;
 		}
 
 		//  Should not consider instant moves...
 		timerUntilNextStep = timeBetweenStep;
-	}
+		waitingForMove = false;
+}
 }

@@ -26,15 +26,7 @@ public class OnirimGameModel
 
 	#region Events for conroller
 
-	public class EnterMoveChoiceStep : UnityEvent<MoveChoiceStep> { }
-	public static EnterMoveChoiceStep moveChoiceStepEntered = new EnterMoveChoiceStep();
-	public static UnityEvent moveChoiceStepExited = new UnityEvent();
-
-	#endregion
-
-	#region Events for view
-
-	public class StepEvent : UnityEvent<StepName> { }
+	public class StepEvent : UnityEvent<Step> { }
 	public static StepEvent stepEntered = new StepEvent();
 	public static StepEvent stepExecuted = new StepEvent();
 
@@ -494,19 +486,18 @@ public class Flow
 
 		currentStep = stepsStack.Pop();
 		Debug.Log("<color=purple>Step: <b>" + currentStep.name + "</b></color>");
-		OnirimGameModel.stepEntered.Invoke(currentStep.name);
+		OnirimGameModel.stepEntered.Invoke(currentStep);
 
 		switch (currentStep)
 		{
 			case ExecuteStep s:
 				s.executeMethod(g, stepsStack);
-				OnirimGameModel.stepExecuted.Invoke(currentStep.name);
+				OnirimGameModel.stepExecuted.Invoke(currentStep);
 				if (s.isInstant) OnContinue();
 				break;
 
 			case MoveChoiceStep s:
 				_awaitingMove = true;
-				OnirimGameModel.moveChoiceStepEntered.Invoke(s);
 				break;
 		}
 	}
@@ -520,8 +511,7 @@ public class Flow
 		}
 
 		move.Execute(g, stepsStack);
-		OnirimGameModel.stepExecuted.Invoke(currentStep.name);
-		OnirimGameModel.moveChoiceStepExited.Invoke();
+		OnirimGameModel.stepExecuted.Invoke(currentStep);
 		_awaitingMove = false;
 		//OnContinue();
 	}
