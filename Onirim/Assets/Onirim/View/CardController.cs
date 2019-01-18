@@ -28,22 +28,12 @@ public class CardController : MonoBehaviour
 	private bool isGrabbed = false;
 	private GameObject grabber = null;
 
-	public class CardAnimationEvent : UnityEvent<ICardAnimation> { }
-	public CardAnimationEvent claimedByDeckLayout = new CardAnimationEvent();
-	ICardAnimation cardAnimation = null;
-	private float randFloatingX;
-	private float randFloatingY;
-
 	private void Awake()
 	{
 		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
 		grabbed.AddListener(OnGrab);
 		dropped.AddListener(OnGrabRelease);
-		claimedByDeckLayout.AddListener(OnClaimedByDeckLayout);
-
-		randFloatingX = Random.Range(0.0f, 3.14f);
-		randFloatingY = Random.Range(0.0f, 3.14f);
 	}
 
 	public void SetSprites(Sprite front, Sprite back)
@@ -74,8 +64,6 @@ public class CardController : MonoBehaviour
 	private void Update()
 	{
 		SmoothGoToTargetPoint();
-
-		AnimateCard();
 	}
 
 	private void SmoothGoToTargetPoint()
@@ -136,40 +124,4 @@ public class CardController : MonoBehaviour
 	}
 
 
-
-	private void OnClaimedByDeckLayout(ICardAnimation cardAnimation)
-	{
-		offset.transform.position = transform.position;
-		this.cardAnimation = cardAnimation;
-	}
-
-	// By moving offset
-	private void AnimateCard()
-	{
-		switch (cardAnimation)
-		{
-			case CardAnimationFloating a:
-				offset.transform.position = transform.position + new Vector3(a.x * Mathf.Sin(Time.time + randFloatingX), a.y * Mathf.Sin(Time.time + randFloatingY));
-				break;
-
-		}
-	}
-}
-
-
-
-
-public interface ICardAnimation { }
-
-public struct CardAnimationNone : ICardAnimation { }
-
-public struct CardAnimationFloating : ICardAnimation 
-{
-	public float x, y;
-
-	public CardAnimationFloating(float x, float y)
-	{
-		this.x = x;
-		this.y = y;
-	}
 }
