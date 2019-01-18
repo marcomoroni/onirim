@@ -50,6 +50,7 @@ public class OnirimGameView : MonoBehaviour
 	{
 		this.gameState = gameState;
 		CreateAllCards(gameState.allCards);
+		SetDeckLayoutAnimations();
 		AddListeners();
 	}
 
@@ -198,6 +199,11 @@ public class OnirimGameView : MonoBehaviour
 	{
 		OnirimGameModel.stepEntered.AddListener(OnStepEntered);
 		OnirimGameModel.stepExecuted.AddListener(OnStepExecuted);
+	}
+
+	private void SetDeckLayoutAnimations()
+	{
+		deckLayoutLimbo.cardsAnimation = new CardAnimationFloating(.3f, .3f);
 	}
 
 

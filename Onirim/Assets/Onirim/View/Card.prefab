@@ -79,6 +79,7 @@ MonoBehaviour:
   smoothTranslateTime: 0.1
   smoothRotateTime: 0.1
   rotateVelocity: 0
+  offset: {fileID: 4857937280047492493}
   dropped:
     m_PersistentCalls:
       m_Calls: []

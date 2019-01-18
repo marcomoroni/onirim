@@ -19,6 +19,7 @@ using UnityEngine.Events;
 
 public class DeckLayoutController : MonoBehaviour
 {
+	public ICardAnimation cardsAnimation = new CardAnimationNone();
 
 
 
@@ -53,6 +54,8 @@ public class DeckLayoutController : MonoBehaviour
 
 			// TEMP: set cards in a line
 			targetPoint.transform.position = transform.position + new Vector3(0.2f * i, 0);
+
+			cardController.claimedByDeckLayout.Invoke(cardsAnimation);
 		}
 	}
 
