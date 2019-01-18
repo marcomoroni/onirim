@@ -229,7 +229,7 @@ public enum StepName
 {
 	ReadyToStart,
 	Setup_ComputeInit,
-	Setup_CheckIfHandIsComplete,
+	Setup_ComputeCheckIfHandIsComplete,
 	Setup_DrawCard,
 	Setup_ComputeWhatToDoWithDrawnCard,
 	Setup_AddDrawnCardToHand,
@@ -241,7 +241,10 @@ public enum StepName
 
 	Phase1_MoveChoice,
 
+	X_ComputeIfCanGetDoorFromCardsInLabirinth, //...
 
+
+	Phase3_ComputeIfLimboNeedsToBeReshuffled,
 	Phase3_ShuffleLimboBackIntoDeck
 }
 
@@ -318,13 +321,13 @@ static class StepFactory
 							stepsStack.Push(StepFactory.Create(StepName.Setup_ComputeIfLimboNeedsToBeReshuffled));
 
 							// First hand
-							stepsStack.Push(StepFactory.Create(StepName.Setup_CheckIfHandIsComplete));
+							stepsStack.Push(StepFactory.Create(StepName.Setup_ComputeCheckIfHandIsComplete));
 						}
 					};
 					return s;
 				}
 
-			case StepName.Setup_CheckIfHandIsComplete:
+			case StepName.Setup_ComputeCheckIfHandIsComplete:
 				{
 					ExecuteStep s = new ExecuteStep(stepName, true)
 					{
@@ -333,7 +336,7 @@ static class StepFactory
 							if (g.hand.Count < g.maxNoOfCardsInHand)
 							{
 								// Push new check
-								stepsStack.Push(StepFactory.Create(StepName.Setup_CheckIfHandIsComplete));
+								stepsStack.Push(StepFactory.Create(StepName.Setup_ComputeCheckIfHandIsComplete));
 
 								// Push draw card
 								stepsStack.Push(StepFactory.Create(StepName.Setup_DrawCard));
@@ -444,7 +447,7 @@ static class StepFactory
 							// TO CHANGE of course
 
 							stepsStack.Push(StepFactory.Create(StepName.NewTurn_ComputeInit));
-							stepsStack.Push(StepFactory.Create(StepName.Phase3_ShuffleLimboBackIntoDeck));
+							stepsStack.Push(StepFactory.Create(StepName.Phase3_ComputeIfLimboNeedsToBeReshuffled));
 							//phase 2
 							stepsStack.Push(StepFactory.Create(StepName.Phase1_MoveChoice));
 						}
@@ -454,6 +457,21 @@ static class StepFactory
 
 			case StepName.Phase1_MoveChoice:
 				return new MoveChoiceStep(stepName, new List<Type> { typeof(Move_Phase1_PlayCardInLabirinth), typeof(Move_Phase1_DiscardCard) });
+
+			case StepName.Phase3_ComputeIfLimboNeedsToBeReshuffled:
+				{
+					ExecuteStep s = new ExecuteStep(stepName, true)
+					{
+						executeMethod = (g, stepsStack) =>
+						{
+							if (g.limbo.Count > 0)
+							{
+								stepsStack.Push(StepFactory.Create(StepName.Phase3_ShuffleLimboBackIntoDeck));
+							}
+						}
+					};
+					return s;
+				}
 
 			case StepName.Phase3_ShuffleLimboBackIntoDeck:
 				{

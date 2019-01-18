@@ -1,17 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+
+// TODO:
+//   - Control z render
 
 public class FingerController : MonoBehaviour
 {
 	private Camera cam;
 	private float zIndex = -3;
 
-	private GameObject cardGrabbed = null;
+	private OnirimGameController controller;
+	private OnirimGameView view;
+
+	private GameObject pieceGrabbed = null;
 
 	private void Start()
 	{
 		cam = Camera.main;
+		controller = FindObjectOfType<OnirimGameController>();
+		view = FindObjectOfType<OnirimGameView>();
 	}
 
 	private void Update()
@@ -25,7 +34,7 @@ public class FingerController : MonoBehaviour
 
 		if (Input.GetMouseButtonUp(0))
 		{
-			if (cardGrabbed != null)
+			if (pieceGrabbed != null)
 			{
 				DropCard();
 			}
@@ -41,8 +50,49 @@ public class FingerController : MonoBehaviour
 	// TODO: Attempt moves here
 	private void DropCard()
 	{
-		cardGrabbed.GetComponent<BoardGamePieceController>().dropped.Invoke();
-		cardGrabbed = null;
+		RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.zero);
+		DropArea dropArea = null;
+
+		foreach (RaycastHit2D hit in hits)
+		{
+			dropArea = hit.collider.gameObject.GetComponentInParent<DropArea>();
+
+			// If it's a drop area stop loop
+			if (dropArea != null) break;
+		}
+
+		Move move = null;
+
+		// If piece dropped in drop area
+		if (dropArea != null)
+		{
+			// Move depends on 
+			//    - current step
+			//    - droparea
+
+			move = ComputeMove(controller.currentStep, pieceGrabbed, dropArea);
+		}
+
+		pieceGrabbed.GetComponent<BoardGamePieceController>().dropped.Invoke();
+		pieceGrabbed = null;
+
+		if (move != null)
+		{
+			// Attempt Move
+			OnirimGameController.moveAttempted.Invoke(move, () => { }, () => { });
+		}
+	}
+
+	private Move ComputeMove(Step currentStep, GameObject item, DropArea dropArea)
+	{
+		if (currentStep.name == StepName.Phase1_MoveChoice && dropArea.name == DropAreaName.Labirinth)
+		{
+			Card card = view.cardModelDictionary.FirstOrDefault(x => x.Value == item).Key;
+			return new Move_Phase1_PlayCardInLabirinth(card);
+		}
+
+		// No moves available
+		return null;
 	}
 
 	private void TryToGrabCardOrClick()
@@ -64,11 +114,12 @@ public class FingerController : MonoBehaviour
 		foreach (RaycastHit2D hit in hits)
 		{
 			BoardGamePieceController bgpc = hit.collider.gameObject.GetComponentInParent<BoardGamePieceController>();
-			GameObject go = bgpc.gameObject;
 
-			// If it's a card (parent has CardController component)
+			// If it's a board game piece
 			if (bgpc != null)
 			{
+				GameObject go = bgpc.gameObject;
+
 				// If it can be grabbed
 				if (bgpc.canBeGrabbed)
 				{
@@ -83,7 +134,7 @@ public class FingerController : MonoBehaviour
 		}
 		if (cardOnTop != null)
 		{
-			cardGrabbed = cardOnTop;
+			pieceGrabbed = cardOnTop;
 			cardOnTop.GetComponent<BoardGamePieceController>().grabbed.Invoke(gameObject);
 		}
 	}

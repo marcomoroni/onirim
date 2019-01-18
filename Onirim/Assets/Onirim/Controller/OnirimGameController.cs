@@ -8,6 +8,8 @@ public class OnirimGameController : MonoBehaviour
 {
 	OnirimGameModel model;
 	OnirimGameView view;
+	private Step _currentStep; // only for reference for view
+	public Step currentStep { get { return _currentStep; } }
 
 	public List<Type> allowedMoves = new List<Type>();
 
@@ -31,6 +33,8 @@ public class OnirimGameController : MonoBehaviour
 
 	private void OnStepEntered(Step step)
 	{
+		_currentStep = step;
+
 		switch (step)
 		{
 			case MoveChoiceStep s:

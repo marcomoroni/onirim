@@ -11,7 +11,7 @@ public class OnirimGameView : MonoBehaviour
 
 	public GameObject cardPrefab;
 	public GameObject targetPointPrefab;
-	private Dictionary<Card, GameObject> cardModelDictionary = new Dictionary<Card, GameObject>();
+	public Dictionary<Card, GameObject> cardModelDictionary = new Dictionary<Card, GameObject>();
 	//private Dictionary<GameObject, GameObject> targetPointsDictionary = new Dictionary<GameObject, GameObject>();
 
 	public float timeBetweenStep = 0.2f;
@@ -42,6 +42,8 @@ public class OnirimGameView : MonoBehaviour
 	public DeckLayoutController deckLayoutMain;
 	public DeckLayoutController deckLayoutHand;
 	public DeckLayoutController deckLayoutLimbo;
+	public DeckLayoutController deckLayoutLabirinth;
+	public DeckLayoutController deckLayoutDiscard;
 
 	private void Start()
 	{
