@@ -11,4 +11,13 @@ public class OnirimViewManager : MonoBehaviour
 		onirim = new Onirim();
 		Debug.Log("Onirm game created");
 	}
+
+	private void Update()
+	{
+		// TEMP
+		if (Input.GetKeyDown("space"))
+		{
+			onirim.TryContinue();
+		}
+	}
 }
