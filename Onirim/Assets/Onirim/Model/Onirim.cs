@@ -5,7 +5,7 @@ using System;
 
 public class Onirim : BoardGame<OnirimGameState>
 {
-	public Onirim() : base(new OnirimGameState(), OnirimStepFactory.Create(OnirimSteps.Step1)) { }
+	public Onirim() : base(new OnirimGameState(), new Step_TestStep1()) { }
 }
 
 
@@ -38,36 +38,14 @@ public class OnirimGameState : GameState
 
 // NEW FILE - STEPS
 
-public enum OnirimSteps
+public class Step_TestStep1 : ComputeStep<OnirimGameState>
 {
-	Step1
-}
-
-public static class OnirimStepFactory
-{
-	public static Step<OnirimGameState> Create(OnirimSteps name)
+	public override Stack<Step<OnirimGameState>> Execute(OnirimGameState g)
 	{
-		switch (name)
-		{
-			case OnirimSteps.Step1:
-				return new ComputeStep<OnirimGameState>(OnirimSteps.Step1)
-				{
-					executeMethod = (g) =>
-					{
-						Stack<Step<OnirimGameState>> newSteps = new Stack<Step<OnirimGameState>>();
-						newSteps.Push(Create(OnirimSteps.Step1));
-						return newSteps;
-					}
-				};
-
-			default:
-				return null;
-		}
+		Stack<Step<OnirimGameState>> newSteps = new Stack<Step<OnirimGameState>>();
+		newSteps.Push(new Step_TestStep1());
+		return newSteps;
 	}
-	/*public static Dictionary<Enum, Func<OnirimGameState, Step<OnirimGameState>>> stepsFactory = new Dictionary<Enum, Func<OnirimGameState, Step<OnirimGameState>>>()
-	{
-		{ OnirimSteps.Step1, (g) => { return new ComputeStep<OnirimGameState>(OnirimSteps.Step1); } }
-	};*/
 }
 
 

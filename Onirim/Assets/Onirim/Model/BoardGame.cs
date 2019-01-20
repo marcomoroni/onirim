@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 
 // G: game state
-// Dictionary<Enum, Func<G, Step<G>>> steps: the dictionary with the function to create a step
 
 public abstract class BoardGame<G>
 	where G : GameState
@@ -17,7 +16,6 @@ public abstract class BoardGame<G>
 
 	private Flow<G> _flow;
 
-	//protected BoardGame(G gameState, Dictionary<Enum, Func<G, Step<G>>> stepsFactory, Enum firstStep)
 	protected BoardGame(G gameState, Step<G> firstStep)
 	{
 		_gameState = gameState;
@@ -49,7 +47,6 @@ public sealed class GameContext
 
 
 
-
 public abstract class Move<G>
 {
 	public virtual Stack<Step<G>> Execute(G g) { return new Stack<Step<G>>(); }
@@ -63,40 +60,21 @@ public abstract class Move<G>
 
 public abstract class Step<G>
 {
-	private Enum _name;
-	public Enum name { get { return _name; } }
 
-	public Step(Enum name)
-	{
-		_name = name;
-	}
 }
 
-public sealed class MoveChoiceStep<G> : Step<G>
+public abstract class MoveChoiceStep<G> : Step<G>
 {
-	public List<Type> allowedMoves = new List<Type>();
-
-	public MoveChoiceStep(Enum name, List<Type> allowedMoves) : base(name)
-	{
-		this.allowedMoves = allowedMoves;
-	}
+	public abstract List<Type> allowedMoves { get; }
 }
 
-public sealed class ComputeStep<G> : Step<G>
+public abstract class ComputeStep<G> : Step<G>
 {
 	public bool isInstant { get; }
-	public Func<G, Stack<Step<G>>> executeMethod = (g) => { return new Stack<Step<G>>(); }; // What if I don't want to return anything?
-
-	public ComputeStep(Enum name, bool isInstant = false) : base(name)
-	{
-		this.isInstant = isInstant;
-	}
+	public virtual Stack<Step<G>> Execute(G g) { return new Stack<Step<G>>(); }
 }
 
-//public sealed class GameOverStep<G> : Step<G> // ?
-//{
-//
-//}
+// gameover step ?
 
 
 
@@ -124,14 +102,14 @@ public sealed class Flow<G>
 		}
 
 		_currentStep = stepsStack.Pop();
-		Debug.Log("<color=purple>Step: <b>" + _currentStep.name + "</b></color>");
+		Debug.Log("<color=purple>Step: <b>" + _currentStep.GetType().Name + "</b></color>");
 		// event enter state
 
 		switch (_currentStep)
 		{
 			case ComputeStep<G> s:
 
-				Stack<Step<G>> newSteps = s.executeMethod(_gameState);
+				Stack<Step<G>> newSteps = s.Execute(_gameState);
 
 				// step executed event...
 
