@@ -21,7 +21,6 @@ public class OnirimViewManager : MonoBehaviour
 		}
 		if (Input.GetKeyDown("m"))
 		{
-			Debug.Log("m pressed");
 			onirim.TryMove(new Move_TestMove1());
 		}
 	}

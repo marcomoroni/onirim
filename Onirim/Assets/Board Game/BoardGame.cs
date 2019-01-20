@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-// G: game state
-
 public abstract class BoardGame<G> where G : GameState
 {
-	public readonly G gameState;
-	public readonly GameContext<G> gameContext;
+	public readonly G gameState; // Do not change it outside
+	public readonly GameContext<G> gameContext; // Do not change it outside
 
 	private Flow<G> _flow;
 
@@ -72,6 +70,7 @@ public abstract class Step<G>
 
 public abstract class MoveChoiceStep<G> : Step<G>
 {
+	// All moves, not the valid ones only
 	public abstract List<Type> allowedMoves { get; }
 }
 
@@ -105,7 +104,7 @@ public sealed class Flow<G>
 	{
 		if (_awaitingMove)
 		{
-			Debug.LogWarning("<color=purple>Cannot continue until move is given.</color>");
+			Debug.LogWarning("<color=purple>Waiting for a move.</color>");
 			return;
 		}
 
