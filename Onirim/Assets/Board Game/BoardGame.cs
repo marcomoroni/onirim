@@ -156,6 +156,7 @@ public sealed class Flow<G>
 		}
 
 		// Execute
+		Debug.Log("<color=purple>Move: <b>" + move.GetType().Name + "</b></color>");
 		Stack<Step<G>> newSteps = move.Execute(_gameState, _gameContext);
 
 		// Push back new steps
@@ -166,5 +167,7 @@ public sealed class Flow<G>
 				stepsStack.Push(newSteps.Pop());
 			}
 		}
+
+		_awaitingMove = false;
 	}
 }

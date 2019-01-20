@@ -84,15 +84,26 @@ public class Step_TestStep1 : ComputeStep<OnirimGameState>
 	public override Stack<Step<OnirimGameState>> Execute(OnirimGameState g, GameContext<OnirimGameState> ctx)
 	{
 		Stack<Step<OnirimGameState>> newSteps = new Stack<Step<OnirimGameState>>();
+		newSteps.Push(new Step_TestStep2());
 		newSteps.Push(new Step_TestStep1());
 		return newSteps;
 	}
+}
+
+public class Step_TestStep2 : MoveChoiceStep<OnirimGameState>
+{
+	public override List<Type> allowedMoves => new List<Type>() { typeof(Move_TestMove1) };
 }
 
 
 
 
 // NEW FILE - MOVES
+
+public class Move_TestMove1 : Move<OnirimGameState>
+{
+
+}
 
 public class Move_Phase1PlayCardInLabirinth : Move<OnirimGameState>
 {
@@ -113,5 +124,22 @@ public enum Onirim_Dream { Nightmare };
 
 public class OnirimNormalCard
 {
+	public bool faceUp = true;
 
+	public readonly Onirim_Category category;
+	public readonly Onirim_Symbol? symbol;
+	public readonly Onirim_Color? color;
+	public readonly Onirim_Dream? dream;
+
+	public OnirimNormalCard(
+		Onirim_Category category,
+		Onirim_Symbol? symbol = null,
+		Onirim_Color? color = null,
+		Onirim_Dream? dream = null)
+	{
+		this.category = category;
+		this.symbol = symbol;
+		this.color = color;
+		this.dream = dream;
+	}
 }
