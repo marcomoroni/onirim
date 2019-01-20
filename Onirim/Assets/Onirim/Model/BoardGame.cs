@@ -5,21 +5,18 @@ using System;
 
 // G: game state
 
-public abstract class BoardGame<G>
-	where G : GameState
+public abstract class BoardGame<G> where G : GameState
 {
-	private G _gameState;
-	public G gameState { get { return _gameState; } }
-
-	private GameContext _gameContext;
-	public GameContext gameContext { get { return _gameContext; } }
+	public readonly G gameState;
+	public readonly GameContext<G> gameContext;
 
 	private Flow<G> _flow;
 
-	protected BoardGame(G gameState, Step<G> firstStep)
+	protected BoardGame(G gameState, Step<G> firstStep, GameModifications<G> gameModifications)
 	{
-		_gameState = gameState;
-		_flow = new Flow<G>(gameState, firstStep);
+		this.gameState = gameState;
+		this.gameContext = new GameContext<G>(gameModifications);
+		_flow = new Flow<G>(this.gameState, this.gameContext, firstStep);
 	}
 
 	public void TryContinue()
@@ -39,9 +36,19 @@ public abstract class BoardGame<G>
 
 public abstract class GameState { }
 
-public sealed class GameContext
+public abstract class GameModifications<G> { }
+
+public sealed class GameContext<G>
 {
-	// current step info, maybe without passing the step itself
+	// To be read outside and used by the boardgame class
+
+	public Step<G> currentStep = null;
+	public readonly GameModifications<G> gameModifications;
+
+	public GameContext(GameModifications<G> gameModifications)
+	{
+		this.gameModifications = gameModifications;
+	}
 }
 
 
@@ -49,8 +56,8 @@ public sealed class GameContext
 
 public abstract class Move<G>
 {
-	public virtual Stack<Step<G>> Execute(G g) { return new Stack<Step<G>>(); }
-	public virtual bool IsValid(G g) { return true; }
+	public virtual Stack<Step<G>> Execute(G g, GameContext<G> ctx) { return null; }
+	public virtual bool IsValid(G g, GameContext<G> ctx) { return true; }
 }
 
 
@@ -71,7 +78,7 @@ public abstract class MoveChoiceStep<G> : Step<G>
 public abstract class ComputeStep<G> : Step<G>
 {
 	public bool isInstant { get; }
-	public virtual Stack<Step<G>> Execute(G g) { return new Stack<Step<G>>(); }
+	public virtual Stack<Step<G>> Execute(G g, GameContext<G> ctx) { return null; }
 }
 
 // gameover step ?
@@ -83,13 +90,14 @@ public abstract class ComputeStep<G> : Step<G>
 public sealed class Flow<G>
 {
 	private Stack<Step<G>> stepsStack = new Stack<Step<G>>();
-	private Step<G> _currentStep;
 	private bool _awaitingMove = false;
 	private G _gameState;
+	private GameContext<G> _gameContext;
 
-	public Flow(G gameState, Step<G> firstStep) //, Step firstStep or stepname
+	public Flow(G gameState, GameContext<G> gameContext, Step<G> firstStep)
 	{
 		_gameState = gameState;
+		_gameContext = gameContext;
 		stepsStack.Push(firstStep);
 	}
 
@@ -101,22 +109,25 @@ public sealed class Flow<G>
 			return;
 		}
 
-		_currentStep = stepsStack.Pop();
-		Debug.Log("<color=purple>Step: <b>" + _currentStep.GetType().Name + "</b></color>");
-		// event enter state
+		_gameContext.currentStep = stepsStack.Pop();
+		Debug.Log("<color=purple>Step: <b>" + _gameContext.currentStep.GetType().Name + "</b></color>");
+		// event enter state..
 
-		switch (_currentStep)
+		switch (_gameContext.currentStep)
 		{
 			case ComputeStep<G> s:
 
-				Stack<Step<G>> newSteps = s.Execute(_gameState);
+				Stack<Step<G>> newSteps = s.Execute(_gameState, _gameContext);
 
 				// step executed event...
 
 				// Push back new steps
-				while (newSteps.Count > 0)
+				if (newSteps != null)
 				{
-					stepsStack.Push(newSteps.Pop());
+					while (newSteps.Count > 0)
+					{
+						stepsStack.Push(newSteps.Pop());
+					}
 				}
 
 				if (s.isInstant) TryContinue();
@@ -138,19 +149,22 @@ public sealed class Flow<G>
 		}
 
 		// Check if move is valid
-		if (!move.IsValid(_gameState))
+		if (!move.IsValid(_gameState, _gameContext))
 		{
 			Debug.LogWarning("<color=purple>Move not valid.</color>");
 			return;
 		}
 
 		// Execute
-		Stack<Step<G>> newSteps = move.Execute(_gameState);
+		Stack<Step<G>> newSteps = move.Execute(_gameState, _gameContext);
 
 		// Push back new steps
-		while (newSteps.Count > 0)
+		if (newSteps != null)
 		{
-			stepsStack.Push(newSteps.Pop());
+			while (newSteps.Count > 0)
+			{
+				stepsStack.Push(newSteps.Pop());
+			}
 		}
 	}
 }

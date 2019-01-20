@@ -5,8 +5,10 @@ using System;
 
 public class Onirim : BoardGame<OnirimGameState>
 {
-	public Onirim() : base(new OnirimGameState(), new Step_TestStep1()) { }
+	public Onirim() : base(new OnirimGameState(), new Step_TestStep1(), new OnirimGameModifications()) { }
 }
+
+
 
 
 
@@ -22,13 +24,52 @@ public class OnirimGameState : GameState
 	public List<OnirimNormalCard> hand = new List<OnirimNormalCard>();
 	public List<OnirimNormalCard> discardPile = new List<OnirimNormalCard>();
 	public List<OnirimNormalCard> labirinth = new List<OnirimNormalCard>();
-	public int usedCardsLabirinthIndex = 0;             // This and the previous cards cannot be used for obtaining a Door
+	public int usedCardsLabirinth = 0; // Number of used cards that cannot be used again to open a Door
 	public List<OnirimNormalCard> obtainedDoors = new List<OnirimNormalCard>();
 	public List<OnirimNormalCard> limbo = new List<OnirimNormalCard>();
+
+	// For example
+	public List<Onirim_Color> bookOfStepsLostAndFound = new List<Onirim_Color>();
 
 	public OnirimGameState()
 	{
 		Debug.Log("Initalising OnirimGameState...");
+	}
+}
+
+public class OnirimGameModifications : GameModifications<OnirimGameState>
+{
+	public readonly bool theBookOfStepsLostAndFound;
+	public readonly bool theGlyphs;
+	public readonly bool theDreamcatchers;
+	public readonly bool theTowers;
+	public readonly bool happyDreamsAndDarkPremonitions;
+	public readonly bool crossroadsAndDeadEnds;
+	public readonly bool theDoorToTheOniverse;
+	public readonly bool sphinxDiverAndConfusion;
+	public readonly bool theMirrors;
+
+	public OnirimGameModifications(
+		bool theBookOfStepsLostAndFound = false,
+		bool theGlyphs = false,
+		bool theDreamcatchers = false,
+		bool theTowers = false,
+		bool happyDreamsAndDarkPremonitions = false,
+		bool crossroadsAndDeadEnds = false,
+		bool theDoorToTheOniverse = false,
+		bool sphinxDiverAndConfusion = false,
+		bool theMirrors = false
+		)
+	{
+		this.theBookOfStepsLostAndFound = theBookOfStepsLostAndFound;
+		this.theGlyphs = theGlyphs;
+		this.theDreamcatchers = theDreamcatchers;
+		this.theTowers = theTowers;
+		this.happyDreamsAndDarkPremonitions = happyDreamsAndDarkPremonitions;
+		this.crossroadsAndDeadEnds = crossroadsAndDeadEnds;
+		this.theDoorToTheOniverse = theDoorToTheOniverse;
+		this.sphinxDiverAndConfusion = sphinxDiverAndConfusion;
+		this.theMirrors = theMirrors;
 	}
 }
 
@@ -40,7 +81,7 @@ public class OnirimGameState : GameState
 
 public class Step_TestStep1 : ComputeStep<OnirimGameState>
 {
-	public override Stack<Step<OnirimGameState>> Execute(OnirimGameState g)
+	public override Stack<Step<OnirimGameState>> Execute(OnirimGameState g, GameContext<OnirimGameState> ctx)
 	{
 		Stack<Step<OnirimGameState>> newSteps = new Stack<Step<OnirimGameState>>();
 		newSteps.Push(new Step_TestStep1());
