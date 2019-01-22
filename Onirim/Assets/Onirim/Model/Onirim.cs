@@ -5,7 +5,7 @@ using System;
 
 public class Onirim : BoardGame<OnirimGameState>
 {
-	public Onirim() : base(new OnirimGameState(), new Step_TestStep1(), new OnirimGameModifications()) { }
+	public Onirim() : base(new OnirimGameState(), new Step_InitialiseTurn(), new OnirimGameModifications()) { }
 }
 
 
@@ -120,20 +120,56 @@ public class OnirimGameModifications : GameModifications<OnirimGameState>
 
 // NEW FILE - STEPS
 
-public class Step_TestStep1 : ComputeStep<OnirimGameState>
+public class Step_InitialiseTurn : ComputeStep<OnirimGameState>
 {
-	public override Stack<Step<OnirimGameState>> Execute(OnirimGameState g, GameContext<OnirimGameState> ctx)
+	public override bool isInstant => true;
+
+	public override void Execute(OnirimGameState g, GameContext<OnirimGameState> ctx)
 	{
-		Stack<Step<OnirimGameState>> newSteps = new Stack<Step<OnirimGameState>>();
-		newSteps.Push(new Step_TestStep2());
-		newSteps.Push(new Step_TestStep1());
-		return newSteps;
+		stepsToPush.Push(new Step_InitialisePhase1());
+		stepsToPush.Push(new StepTEMP_MoveChoiceTest());
+		stepsToPush.Push(new Step_InitialisePhase2());
+		stepsToPush.Push(new Step_InitialisePhase3());
+		stepsToPush.Push(new Step_InitialiseTurn());
 	}
 }
 
-public class Step_TestStep2 : MoveChoiceStep<OnirimGameState>
+public class Step_InitialisePhase1 : ComputeStep<OnirimGameState>
 {
-	public override List<Type> allowedMoves => new List<Type>() { typeof(Move_TestMove1) };
+
+}
+
+public class Step_InitialisePhase2 : ComputeStep<OnirimGameState>
+{
+
+}
+
+public class Step_InitialisePhase3 : ComputeStep<OnirimGameState>
+{
+
+}
+
+public class StepTEMP_MoveChoiceTest : MoveChoiceStep<OnirimGameState>
+{
+	public override List<Type> GetAllowedMoves(GameContext<OnirimGameState> ctx)
+	{
+		return new List<Type> { typeof(MoveTEMP_TestMove1) };
+	}
+}
+
+public class StepTEMP_ChooseDoorFromMainDeck : MoveChoiceStep<OnirimGameState>
+{
+	public readonly Onirim_Color color;
+
+	public override List<Type> GetAllowedMoves(GameContext<OnirimGameState> ctx)
+	{
+		return new List<Type> { typeof(MoveTEMP_ChooseDoorFromMainDeck) };
+	}
+
+	public StepTEMP_ChooseDoorFromMainDeck(Onirim_Color color)
+	{
+		this.color = color;
+	}
 }
 
 
@@ -141,14 +177,30 @@ public class Step_TestStep2 : MoveChoiceStep<OnirimGameState>
 
 // NEW FILE - MOVES
 
-public class Move_TestMove1 : Move<OnirimGameState>
+public class MoveTEMP_TestMove1 : Move<OnirimGameState>
 {
 
 }
 
-public class Move_Phase1PlayCardInLabirinth : Move<OnirimGameState>
+public class MoveTEMP_TestMove2 : Move<OnirimGameState>
 {
 
+}
+
+public class MoveTEMP_ChooseDoorFromMainDeck : Move<OnirimGameState>
+{
+	public readonly OnirimCard card;
+
+	public override bool IsValid(OnirimGameState g, GameContext<OnirimGameState> ctx)
+	{
+		//if (card.color == ctx.currentStep.)
+		return true;
+	}
+
+	public MoveTEMP_ChooseDoorFromMainDeck(OnirimCard card)
+	{
+		this.card = card;
+	}
 }
 
 

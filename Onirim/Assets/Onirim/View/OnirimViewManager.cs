@@ -58,9 +58,13 @@ public class OnirimViewManager : MonoBehaviour
 		{
 			onirim.TryContinue();
 		}
-		if (Input.GetKeyDown("m"))
+		if (Input.GetKeyDown("1"))
 		{
-			onirim.TryMove(new Move_TestMove1());
+			onirim.TryMove(new MoveTEMP_TestMove1());
+		}
+		if (Input.GetKeyDown("2"))
+		{
+			onirim.TryMove(new MoveTEMP_TestMove2());
 		}
 	}
 }

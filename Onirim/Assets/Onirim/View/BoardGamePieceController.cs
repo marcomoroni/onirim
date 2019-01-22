@@ -8,7 +8,6 @@ using UnityEngine.Events;
 
 public abstract class BoardGamePieceController : MonoBehaviour
 {
-	//public readonly W wrapped { get; set; }
 	public GameObject targetPoint { get; set; } // Should only be set when initialised
 
 	public float smoothTranslateTime = 0.1f;

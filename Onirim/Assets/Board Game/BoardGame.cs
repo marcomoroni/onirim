@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+// - Reorder cards
+// - Have a deck structure
+//      - reordable // NO, may lead to bugs
+//      - with events
+
 public abstract class BoardGame<G> where G : GameState
 {
 	public readonly G gameState; // Do not change it outside
@@ -54,8 +59,9 @@ public sealed class GameContext<G>
 
 public abstract class Move<G>
 {
-	public virtual Stack<Step<G>> Execute(G g, GameContext<G> ctx) { return null; }
-	public virtual bool IsValid(G g, GameContext<G> ctx) { return true; }
+	public Stack<Step<G>> stepsToPush = new Stack<Step<G>>();
+	public virtual void Execute(G g, GameContext<G> ctx) { }
+	public virtual bool IsValid(G g, GameContext<G> ctx) => true;
 }
 
 
@@ -68,16 +74,18 @@ public abstract class Step<G>
 
 }
 
-public abstract class MoveChoiceStep<G> : Step<G>
+public abstract class MoveChoiceStep<G>  : Step<G>
 {
 	// All moves, not the valid ones only
-	public abstract List<Type> allowedMoves { get; }
+	//public abstract List<Type> allowedMoves { get; }
+	public abstract List<Type> GetAllowedMoves(GameContext<G> ctx); // output can be different depending on game modifications
 }
 
 public abstract class ComputeStep<G> : Step<G>
 {
-	public bool isInstant { get; }
-	public virtual Stack<Step<G>> Execute(G g, GameContext<G> ctx) { return null; }
+	public virtual bool isInstant => false;
+	public Stack<Step<G>> stepsToPush = new Stack<Step<G>>();
+	public virtual void Execute(G g, GameContext<G> ctx) { }
 }
 
 // gameover step ?
@@ -116,17 +124,15 @@ public sealed class Flow<G>
 		{
 			case ComputeStep<G> s:
 
-				Stack<Step<G>> newSteps = s.Execute(_gameState, _gameContext);
+				 s.Execute(_gameState, _gameContext);
 
 				// step executed event...
 
 				// Push back new steps
-				if (newSteps != null)
+				Stack<Step<G>> newSteps = s.stepsToPush;
+				while (newSteps.Count > 0)
 				{
-					while (newSteps.Count > 0)
-					{
-						stepsStack.Push(newSteps.Pop());
-					}
+					stepsStack.Push(newSteps.Pop());
 				}
 
 				if (s.isInstant) TryContinue();
@@ -147,6 +153,14 @@ public sealed class Flow<G>
 			return;
 		}
 
+		// Check if move is allowed
+		MoveChoiceStep<G> currentMoveChoiceStep = _gameContext.currentStep as MoveChoiceStep<G>;
+		if (!currentMoveChoiceStep.GetAllowedMoves(_gameContext).Contains(move.GetType()))
+		{
+			Debug.LogWarning("<color=purple>Move not allowed.</color>");
+			return;
+		}
+
 		// Check if move is valid
 		if (!move.IsValid(_gameState, _gameContext))
 		{
@@ -156,15 +170,13 @@ public sealed class Flow<G>
 
 		// Execute
 		Debug.Log("<color=purple>Move: <b>" + move.GetType().Name + "</b></color>");
-		Stack<Step<G>> newSteps = move.Execute(_gameState, _gameContext);
+		move.Execute(_gameState, _gameContext);
 
 		// Push back new steps
-		if (newSteps != null)
+		Stack<Step<G>> newSteps = move.stepsToPush;
+		while (newSteps.Count > 0)
 		{
-			while (newSteps.Count > 0)
-			{
-				stepsStack.Push(newSteps.Pop());
-			}
+			stepsStack.Push(newSteps.Pop());
 		}
 
 		_awaitingMove = false;
