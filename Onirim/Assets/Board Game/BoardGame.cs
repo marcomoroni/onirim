@@ -71,7 +71,7 @@ public abstract class Move<G>
 
 public abstract class Step<G>
 {
-
+	public Dictionary<string, object> parameters = new Dictionary<string, object>();
 }
 
 public abstract class MoveChoiceStep<G>  : Step<G>

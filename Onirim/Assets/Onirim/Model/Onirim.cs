@@ -159,8 +159,6 @@ public class StepTEMP_MoveChoiceTest : MoveChoiceStep<OnirimGameState>
 
 public class StepTEMP_ChooseDoorFromMainDeck : MoveChoiceStep<OnirimGameState>
 {
-	public readonly Onirim_Color color;
-
 	public override List<Type> GetAllowedMoves(GameContext<OnirimGameState> ctx)
 	{
 		return new List<Type> { typeof(MoveTEMP_ChooseDoorFromMainDeck) };
@@ -168,7 +166,7 @@ public class StepTEMP_ChooseDoorFromMainDeck : MoveChoiceStep<OnirimGameState>
 
 	public StepTEMP_ChooseDoorFromMainDeck(Onirim_Color color)
 	{
-		this.color = color;
+		parameters["color"] = color;
 	}
 }
 
@@ -193,8 +191,10 @@ public class MoveTEMP_ChooseDoorFromMainDeck : Move<OnirimGameState>
 
 	public override bool IsValid(OnirimGameState g, GameContext<OnirimGameState> ctx)
 	{
-		//if (card.color == ctx.currentStep.)
-		return true;
+		if (card.color == (Onirim_Color)ctx.currentStep.parameters["color"]) // ...
+			return true;
+
+		return false;
 	}
 
 	public MoveTEMP_ChooseDoorFromMainDeck(OnirimCard card)
