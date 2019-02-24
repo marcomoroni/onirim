@@ -12,7 +12,7 @@ public class Onirim : BoardGame<OnirimGameState>
 
 
 
-// NEW FILE - GAMESTATE
+// NEW FILE - GAMESTATE AND MODIFICATIONS
 
 public class OnirimGameState : GameState
 {
@@ -122,7 +122,7 @@ public class OnirimGameModifications : GameModifications<OnirimGameState>
 
 public class Step_InitialiseTurn : ComputeStep<OnirimGameState>
 {
-	public override bool isInstant => true;
+	public override bool IsInstant => true;
 
 	public override void Execute(OnirimGameState g, GameContext<OnirimGameState> ctx)
 	{
@@ -149,6 +149,16 @@ public class Step_InitialisePhase3 : ComputeStep<OnirimGameState>
 
 }
 
+public class Step_Phase1 : MoveChoiceStep<OnirimGameState>
+{
+	public override List<Type> GetAllowedMoves(GameContext<OnirimGameState> ctx)
+	{
+		return new List<Type> { typeof(Move_PlayCardInLabirinth) };
+	}
+}
+
+//////
+
 public class StepTEMP_MoveChoiceTest : MoveChoiceStep<OnirimGameState>
 {
 	public override List<Type> GetAllowedMoves(GameContext<OnirimGameState> ctx)
@@ -174,6 +184,33 @@ public class StepTEMP_ChooseDoorFromMainDeck : MoveChoiceStep<OnirimGameState>
 
 
 // NEW FILE - MOVES
+
+public class Move_PlayCardInLabirinth : Move<OnirimGameState>
+{
+	public readonly OnirimCard card;
+
+	public Move_PlayCardInLabirinth(OnirimCard card)
+	{
+		this.card = card;
+	}
+
+	public override bool IsValid(OnirimGameState g, GameContext<OnirimGameState> ctx)
+	{
+		// TODO
+		return true;
+	}
+
+	public override void Execute(OnirimGameState g, GameContext<OnirimGameState> ctx)
+	{
+		// Remove card from initial collection (most likely hand)...
+
+		g.labirinth.Add(card);
+
+		// ...
+	}
+}
+
+//////
 
 public class MoveTEMP_TestMove1 : Move<OnirimGameState>
 {

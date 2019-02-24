@@ -71,6 +71,7 @@ public abstract class Move<G>
 
 public abstract class Step<G>
 {
+	// Use this to store additional info about the step. Moves may need it
 	public Dictionary<string, object> parameters = new Dictionary<string, object>();
 }
 
@@ -83,7 +84,7 @@ public abstract class MoveChoiceStep<G>  : Step<G>
 
 public abstract class ComputeStep<G> : Step<G>
 {
-	public virtual bool isInstant => false;
+	public virtual bool IsInstant => false;
 	public Stack<Step<G>> stepsToPush = new Stack<Step<G>>();
 	public virtual void Execute(G g, GameContext<G> ctx) { }
 }
@@ -135,7 +136,7 @@ public sealed class Flow<G>
 					stepsStack.Push(newSteps.Pop());
 				}
 
-				if (s.isInstant) TryContinue();
+				if (s.IsInstant) TryContinue();
 
 				break;
 
